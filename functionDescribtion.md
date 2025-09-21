@@ -21,7 +21,7 @@
     - Prints what kind of block was mined out, if the block was AIR, then it says that theres no block to mine here
 
     
-- Line 104-121 displayWorld
+- Line 104-120 displayWorld
     - first, it prints out "World map: " text in CYAN color.
     - second, it prints out the top of the world map pattern
     - it uses iteration to display vertical borders, and to get players when they are in a secret area or not. Otherwise, a symbol of a block is printed out.
