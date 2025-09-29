@@ -41,6 +41,8 @@ public class Chat {
             // keeps opportunistic passers-by (e.g. AI crawler bots) out.
             output.println("F4EF9A36-5FCD-4D27-8A0A-FC7C77D3DBB2");
             output.flush();
+
+           
             // Q. Why is this ^ `flush()` statement necessary?
             //    See https://stackoverflow.com/questions/2340106/what-is-the-purpose-of-flush-in-java-streams
 
@@ -84,18 +86,26 @@ public class Chat {
                 }
 
                 // 2. Collect a line of input from the user.
-                var messageToSend = inputFromUser.nextLine();
-                if (!messageToSend.equals("")) {
-                    // 3. If it WASN'T a blank line, send it: it will be interpreted as
-                    // a chat message.
-                    output.println(messageToSend);
+                
+                var messageToSend = inputFromUser.nextLine().trim();
+                String name = "@Player";
+
+
+               
+                        if (!messageToSend.equals("")) {
+
+                              output.println(name + ": [" + messageToSend + "]");
+                        // 3. If it WASN'T a blank line, send it: it will be interpreted as
+                        // a chat message.
+                        }
 
                     // Q. What would happen if we DIDN'T take care not to send empty lines?
                     //    Hint: what does our code do if it sees two "ping" responses ("+" lines) in a row?
+                
                 }
-
+            
                 // 3(b). Loop back to step 1.
-            }
+            
         } catch (Throwable t) {
             // We are being very lazy here and not handling errors properly.
             // In a real program, we would want to handle errors relating to network
@@ -106,3 +116,8 @@ public class Chat {
         }
     }
 }
+    
+    
+    
+
+

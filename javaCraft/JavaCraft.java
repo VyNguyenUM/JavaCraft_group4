@@ -49,11 +49,12 @@ public class JavaCraft {
   private static boolean unlockMode = false;
   private static boolean secretDoorUnlocked = false;
   private static boolean inSecretArea = false;
+  private static boolean chatMode = false;
   private static final int INVENTORY_SIZE = 100;
   
 
   public static void main(String[] args) {
-    Chat.chatSession();
+
     initGame(25, 15);
     generateWorld();
     System.out.println(ANSI_GREEN + "Welcome to Simple Minecraft!" + ANSI_RESET);
@@ -176,7 +177,7 @@ public class JavaCraft {
       displayWorld();
       displayInventory();
       System.out.println(ANSI_CYAN
-          + "Enter your action: 'WASD': Move, 'M': Mine, 'P': Place, 'C': Craft, 'I': Interact, 'Save': Save, 'Load': Load, 'Exit': Quit, 'Unlock': Unlock Secret Door"
+          + "Enter your action: 'WASD': Move, 'M': Mine, 'P': Place, 'C': Craft, 'I': Interact, 'Save': Save, 'Load': Load, 'Exit': Quit, 'Unlock': Unlock Secret Door, 'Chat':Enter game chat"
           + ANSI_RESET);
       String input = scanner.next().toLowerCase();
       if (input.equalsIgnoreCase("w") || input.equalsIgnoreCase("up") ||
@@ -219,7 +220,11 @@ public class JavaCraft {
         lookAround();
       } else if (input.equalsIgnoreCase("unlock")) {
         unlockMode = true;
-      } else if (input.equalsIgnoreCase("open")) {
+      }else if (input.equalsIgnoreCase("chat")){
+          chatMode = true;
+          Chat.chatSession();
+      }
+       else if (input.equalsIgnoreCase("open")) {
         if (unlockMode && craftingCommandEntered && miningCommandEntered && movementCommandEntered) {
           secretDoorUnlocked = true;
           resetWorld();
