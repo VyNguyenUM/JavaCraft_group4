@@ -1,4 +1,3 @@
-package javaCraft;
 
 
 import java.io.*;
