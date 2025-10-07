@@ -157,6 +157,7 @@ public class JavaCraft {
         break;
       case PLASTIC:
         blockColor = ANSI_MAGENTA;
+        break;
       default:
         blockColor = ANSI_RESET;
         break;

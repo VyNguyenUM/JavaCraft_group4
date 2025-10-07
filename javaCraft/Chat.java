@@ -65,15 +65,17 @@ public class Chat {
             // We take special care not to send an empty line because that's what the protocol
             // uses to mean "ping"!
             //
+         
             while (true) {
                 // 1. Ping the server.
                 output.println("");
                 output.flush(); // Don't forget to actually send the output through!
-
+             String name = "@Player";
                 // 1(b). Collect responses until we see the one that specifically indicates
                 // that the server has received and processed our "ping".
                 while (true) {
-                    var fromServer = inputFromServer.readLine();
+                
+                    String fromServer = inputFromServer.readLine();
                     if (fromServer == null) return; // We get null if the server disconnects.
 
                     if (fromServer.equals("+")) {
@@ -81,24 +83,36 @@ public class Chat {
                         // on to step 2.
                         break;
                     }
+                 
+                    if(fromServer.contains(name)){
+                        int i = fromServer.indexOf(":");
+                        if(i != 1){
+                            if(i + 1 < fromServer.length()){
+                                String prefix = fromServer .substring(0, i + 1);
+                                String encryptedPart = fromServer.substring(i+1).trim();
+                                System.out.println(prefix + " " + encryptedPart);
+                            }
+                        }else{
+                            System.out.println(fromServer);
+                        }
+
                     // Some other message from the server: just print it.
                     //System.out.println(fromServer);
-                    String decryptedMessage = decrypt(fromServer);
-                    System.out.println(decryptedMessage);
+                  
                 
+                } else {
+                    System.out.println(fromServer);
                 }
+            }
 
                 // 2. Collect a line of input from the user.
                 
                 String messageToSend = inputFromUser.nextLine().trim();
-                String name = "@Player";
-               
-
-
-               
                         if (!messageToSend.equals("")) {
-                            String encryptedMessage =  encrypt(messageToSend);
+                            
+                            String encryptedMessage = encrypt(messageToSend);
                               output.println(name + ": "  + encryptedMessage);
+                              output.flush();   
                         
                         // 3. If it WASN'T a blank line, send it: it will be interpreted as
                         // a chat message.
@@ -108,6 +122,7 @@ public class Chat {
                     //    Hint: what does our code do if it sees two "ping" responses ("+" lines) in a row?
                 
                 }
+            
             
                 // 3(b). Loop back to step 1.
             
@@ -119,8 +134,9 @@ public class Chat {
             // the user.
             t.printStackTrace();
         }
-
     }
+
+    
      public static String encrypt(String messageToSend){
         int shift = 3;
         char[] letters = messageToSend.toCharArray();
