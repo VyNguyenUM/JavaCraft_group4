@@ -31,6 +31,7 @@ public class Chat {
             // an *output stream*, for sending messages to the server.
             final var inputFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             final var output = new PrintWriter(socket.getOutputStream());
+        
 
             // Our chat system follows a very simple *communication protocol*.
             // https://en.wikipedia.org/wiki/Communication_protocol
@@ -81,19 +82,24 @@ public class Chat {
                         break;
                     }
                     // Some other message from the server: just print it.
-                    System.out.println(fromServer);
+                    //System.out.println(fromServer);
+                    String decryptedMessage = decrypt(fromServer);
+                    System.out.println(decryptedMessage);
+                
                 }
 
                 // 2. Collect a line of input from the user.
                 
-                var messageToSend = inputFromUser.nextLine().trim();
+                String messageToSend = inputFromUser.nextLine().trim();
                 String name = "@Player";
+               
 
 
                
                         if (!messageToSend.equals("")) {
-
-                              output.println(name + ": [" + messageToSend + "]");
+                            String encryptedMessage =  encrypt(messageToSend);
+                              output.println(name + ": "  + encryptedMessage);
+                        
                         // 3. If it WASN'T a blank line, send it: it will be interpreted as
                         // a chat message.
                         }
@@ -113,8 +119,50 @@ public class Chat {
             // the user.
             t.printStackTrace();
         }
+
     }
-}
+     public static String encrypt(String messageToSend){
+        int shift = 3;
+        char[] letters = messageToSend.toCharArray();
+
+            for(int i = 0;i < letters.length;i++){
+                if(Character.isUpperCase(letters[i])){
+                    letters[i] = (char)('A' + (letters[i] - 'A' + shift) % 26);
+                }else if(Character.isLowerCase(letters[i])){
+                    letters[i] = (char)('a' + (letters[i] - 'a' + shift) % 26);
+                }
+
+                }
+                String encrypted = new String(letters);
+          
+                return encrypted;
+            }
+
+         public static String decrypt(String messageToSend) {
+        int shift = 3;
+        char[] letters = messageToSend.toCharArray();
+
+        for (int i = 0; i < letters.length; i++) {
+            if (Character.isUpperCase(letters[i])) {
+                letters[i] = (char) ('A' + ((letters[i] - 'A' - shift + 26) % 26));
+            } else if (Character.isLowerCase(letters[i])) {
+                letters[i] = (char) ('a' + ((letters[i] - 'a' - shift + 26) % 26));
+            }
+        }
+        return new String(letters);
+    }
+        }
+           
+
+
+
+   
+        
+
+    
+
+    
+    
     
     
     

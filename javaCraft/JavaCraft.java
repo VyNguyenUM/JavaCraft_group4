@@ -8,6 +8,8 @@ public class JavaCraft {
   private static final int LEAVES = 2;
   private static final int STONE = 3;
   private static final int IRON_ORE = 4;
+  private static final int INK_BLOCK = 5;
+  private static final int PLASTIC = 6;
   private static int NEW_WORLD_WIDTH = 25;
   private static int NEW_WORLD_HEIGHT = 15;
   private static int EMPTY_BLOCK = 0;
@@ -17,6 +19,7 @@ public class JavaCraft {
   private static final int CRAFTED_WOODEN_PLANKS = 200;
   private static final int CRAFTED_STICK = 201;
   private static final int CRAFTED_IRON_INGOT = 202;
+  private static final int CRAFTED_PEN = 203;
   private static final String ANSI_BROWN = "\u001B[33m";
   private static final String ANSI_RESET = "\u001B[0m";
   private static final String ANSI_GREEN = "\u001B[32m";
@@ -27,6 +30,7 @@ public class JavaCraft {
   private static final String ANSI_BLUE = "\u001B[34m";
   private static final String ANSI_GRAY = "\u001B[37m";
   private static final String ANSI_WHITE = "\u001B[97m";
+  private static final String ANSI_MAGENTA = "\u001B[95m";
 
   private static final String BLOCK_NUMBERS_INFO = "Block Numbers:\n" +
       "0 - Empty block\n" +
@@ -34,9 +38,11 @@ public class JavaCraft {
       "2 - Leaves block\n" +
       "3 - Stone block\n" +
       "4 - Iron ore block\n" +
+      "5 - Ink block \n" +
       "5 - Wooden Planks (Crafted Item)\n" +
       "6 - Stick (Crafted Item)\n" +
-      "7 - Iron Ingot (Crafted Item)";
+      "7 - Iron Ingot (Crafted Item)" +
+      "8 - Pen (Crafted Item)";
   private static int[][] world;
   private static int worldWidth;
   private static int worldHeight;
@@ -91,18 +97,24 @@ public class JavaCraft {
         int randValue = rand.nextInt(100);
         if (randValue < 20) {
           world[x][y] = WOOD;
-        } else if (randValue < 35) {
+        } else if (randValue < 30) {
           world[x][y] = LEAVES;
+        }
+        else if(randValue < 40){
+          world[x][y] = INK_BLOCK;
         } else if (randValue < 50) {
           world[x][y] = STONE;
-        } else if (randValue < 70) {
+        } else if (randValue < 65) {
           world[x][y] = IRON_ORE;
+        }else if(randValue < 75){
+          world[x][y] = PLASTIC;
         } else {
           world[x][y] = AIR;
         }
       }
     }
-  }
+    }
+  
 
   public static void displayWorld() {
     System.out.println(ANSI_CYAN + "World Map:" + ANSI_RESET);
@@ -140,6 +152,11 @@ public class JavaCraft {
       case IRON_ORE:
         blockColor = ANSI_WHITE;
         break;
+      case INK_BLOCK:
+        blockColor = ANSI_PURPLE;
+        break;
+      case PLASTIC:
+        blockColor = ANSI_MAGENTA;
       default:
         blockColor = ANSI_RESET;
         break;
@@ -157,6 +174,10 @@ public class JavaCraft {
         return '\u2593';
       case IRON_ORE:
         return '\u00B0';
+      case INK_BLOCK:
+        return '\u2588';
+      case PLASTIC:
+        return '\uu25A1';
       default:
         return '-';
     }
@@ -412,6 +433,8 @@ public class JavaCraft {
         return 6;
       case CRAFTED_IRON_INGOT:
         return 7;
+      case CRAFTED_PEN:
+        return 8;
       default:
         return -1;
     }
@@ -425,6 +448,8 @@ public class JavaCraft {
         return CRAFTED_STICK;
       case 7:
         return CRAFTED_IRON_INGOT;
+      case 8:
+        return CRAFTED_PEN;
       default:
         return -1;
     }
@@ -435,6 +460,7 @@ public class JavaCraft {
     System.out.println("1. Craft Wooden Planks: 2 Wood");
     System.out.println("2. Craft Stick: 1 Wood");
     System.out.println("3. Craft Iron Ingot: 3 Iron Ore");
+    System.out.println("4. Craft Pen: 1 plastic 1 ink");
   }
 
   public static void craftItem(int recipe) {
@@ -447,6 +473,9 @@ public class JavaCraft {
         break;
       case 3:
         craftIronIngot();
+        break;
+      case 4:
+        craftPen();
         break;
       default:
         System.out.println("Invalid recipe number.");
@@ -481,6 +510,16 @@ public class JavaCraft {
       System.out.println("Crafted Iron Ingot.");
     } else {
       System.out.println("Insufficient resources to craft Iron Ingot.");
+    }
+  }
+  public static void craftPen(){
+    if(inventoryContains(INK_BLOCK,1) && inventoryContains(PLASTIC,1)){
+      removeItemsFromInventory(INK_BLOCK,1);
+      removeItemsFromInventory(PLASTIC, 1);
+      addCraftedItem(CRAFTED_PEN);
+      System.out.println("Crafted pen.");
+    }else{
+      System.out.println("Insufficient resources to craft Pen.");
     }
   }
 
@@ -545,6 +584,14 @@ public class JavaCraft {
       case AIR:
         System.out.println("Nothing to interact with here.");
         break;
+      case INK_BLOCK:
+        System.out.println( "You gathered ink from the Ink block.");
+        inventory.add(INK_BLOCK);
+        break;
+      case PLASTIC:
+        System.out.println("You gathered plastic.");
+        inventory.add(PLASTIC);
+        break;
       default:
         System.out.println("Unrecognized block. Cannot interact.");
     }
@@ -603,6 +650,10 @@ public class JavaCraft {
         return "Stone";
       case IRON_ORE:
         return "Iron Ore";
+      case INK_BLOCK:
+        return "Ink block";
+      case PLASTIC:
+      return "Plastic";
       default:
         return "Unknown";
     }
@@ -615,6 +666,8 @@ public class JavaCraft {
     System.out.println(ANSI_GREEN + "\u00A7\u00A7 - Leaves block");
     System.out.println(ANSI_BLUE + "\u2593\u2593 - Stone block");
     System.out.println(ANSI_WHITE + "\u00B0\u00B0- Iron ore block");
+    System.out.println(ANSI_PURPLE + "\u2588\u2588- Ink block");
+    System.out.println(ANSI_MAGENTA + "\u001B[95m\u001B[95m - Plastic");
     System.out.println(ANSI_BLUE + "P - Player" + ANSI_RESET);
   }
 
@@ -623,7 +676,7 @@ public class JavaCraft {
     if (inventory.isEmpty()) {
       System.out.println(ANSI_YELLOW + "Empty" + ANSI_RESET);
     } else {
-      int[] blockCounts = new int[5];
+      int[] blockCounts = new int[7];
       for (int i = 0; i < inventory.size(); i++) {
         int block = inventory.get(i);
         blockCounts[block]++;
@@ -659,6 +712,8 @@ public class JavaCraft {
         return ANSI_GRAY;
       case IRON_ORE:
         return ANSI_YELLOW;
+      case INK_BLOCK:
+        return ANSI_PURPLE;
       default:
         return "";
     }
@@ -678,6 +733,8 @@ public class JavaCraft {
         return "Stick";
       case CRAFTED_IRON_INGOT:
         return "Iron Ingot";
+      case CRAFTED_PEN:
+        return "Pen";
       default:
         return "Unknown";
     }
@@ -688,6 +745,7 @@ public class JavaCraft {
       case CRAFTED_WOODEN_PLANKS:
       case CRAFTED_STICK:
       case CRAFTED_IRON_INGOT:
+      case CRAFTED_PEN:
         return ANSI_BROWN;
       default:
         return "";
