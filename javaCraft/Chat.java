@@ -70,7 +70,7 @@ public class Chat {
                 // 1. Ping the server.
                 output.println("");
                 output.flush(); // Don't forget to actually send the output through!
-             String name = "@Player";
+          
                 // 1(b). Collect responses until we see the one that specifically indicates
                 // that the server has received and processed our "ping".
                 while (true) {
@@ -83,49 +83,55 @@ public class Chat {
                         // on to step 2.
                         break;
                     }
-                 
-                    if(fromServer.contains(name)){
-                        int i = fromServer.indexOf(":");
-                        if(i != 1){
-                            if(i + 1 < fromServer.length()){
-                                String prefix = fromServer .substring(0, i + 1);
-                                String encryptedPart = fromServer.substring(i+1).trim();
-                                System.out.println(prefix + " " + encryptedPart);
-                            }
-                        }else{
-                            System.out.println(fromServer);
-                        }
-
-                    // Some other message from the server: just print it.
-                    //System.out.println(fromServer);
                   
+                    
                 
-                } else {
+                    // Some other message from the server: just print it.
+                    
                     System.out.println(fromServer);
                 }
-            }
-
+            
+            
+            
+            
                 // 2. Collect a line of input from the user.
                 
                 String messageToSend = inputFromUser.nextLine().trim();
                         if (!messageToSend.equals("")) {
+                            if(messageChecker(messageToSend)){
+                              int colon = messageToSend.indexOf(':');
+
+                        if (colon != -1 && colon < messageToSend.length() - 1) {
                             
-                            String encryptedMessage = encrypt(messageToSend);
-                              output.println(name + ": "  + encryptedMessage);
-                              output.flush();   
+
+                                String name = messageToSend.substring(0, colon + 1); // includes colon
+                                String message = messageToSend.substring(colon + 1).trim();
+
+                                String encryptedMessage = encrypt(message); 
+                                
+                                output.println(name + encryptedMessage);
+                                output.flush();
+
+                            }
+                            
                         
                         // 3. If it WASN'T a blank line, send it: it will be interpreted as
                         // a chat message.
-                        }
-
+                        
+            }else {
+                output.println("Format is not good,, try again");
+            }
                     // Q. What would happen if we DIDN'T take care not to send empty lines?
                     //    Hint: what does our code do if it sees two "ping" responses ("+" lines) in a row?
                 
-                }
+                
             
             
+            
+        }
+        }
                 // 3(b). Loop back to step 1.
-            
+                    
         } catch (Throwable t) {
             // We are being very lazy here and not handling errors properly.
             // In a real program, we would want to handle errors relating to network
@@ -135,6 +141,13 @@ public class Chat {
             t.printStackTrace();
         }
     }
+    
+    
+    
+    
+
+
+
 
     
      public static String encrypt(String messageToSend){
@@ -153,21 +166,72 @@ public class Chat {
           
                 return encrypted;
             }
+        
 
-         public static String decrypt(String messageToSend) {
-        int shift = 3;
-        char[] letters = messageToSend.toCharArray();
-
-        for (int i = 0; i < letters.length; i++) {
-            if (Character.isUpperCase(letters[i])) {
-                letters[i] = (char) ('A' + ((letters[i] - 'A' - shift + 26) % 26));
-            } else if (Character.isLowerCase(letters[i])) {
-                letters[i] = (char) ('a' + ((letters[i] - 'a' - shift + 26) % 26));
+        public static String decrypt(String messageToSend) {
+            
+            char[] letters = messageToSend.toCharArray();
+            int shift = 3;
+            for (int i = 0; i < letters.length; i++) {
+                if (Character.isUpperCase(letters[i])) {
+                    letters[i] = (char) ('A' + ((letters[i] - 'A' - shift + 26) % 26));
+                } else if (Character.isLowerCase(letters[i])) {
+                    letters[i] = (char) ('a' + ((letters[i] - 'a' - shift + 26) % 26));
+                }
             }
+            return new String(letters);
         }
-        return new String(letters);
+
+        public static boolean messageChecker(String messageToSend){
+            int q0 = 0 , q1 = 1, q2 = 2 , q3 = 3, q4 = 4, q5 = 5;
+            int state = q0;
+
+            for (int i = 0;i < messageToSend.length();i++){
+                char c = messageToSend.charAt(i);
+            
+            if(state == q0){
+                if(c == '@'){
+
+                    state = q1;
+
+                }else {
+                    state = q5;
+                }
+            }else if (state == q1){
+                if(Character.isLetter(c)){
+                    state = q2;
+                }else {
+                    state = q5;
+                }
+            }else if (state == q2){
+                if(Character.isLetter(c)){
+                    state = q2;
+                }else if( c == ':'){
+                    state = q3;
+                }else {
+                    state = q5;
+                }
+            }else if (state == q3){
+                if(Character.isLetter(c) || c == ' '){
+                    state = q4;
+                }else {
+                    state = q5;
+                }
+            }else if(state == q4){
+                if(Character.isLetter(c) || c == ' '){
+                    state = q4;                    
+                }else {
+                    state = q5;
+                }
+            }else if (state == q5){
+                state = q5;  // death state
+            }
+            }
+
+            return state == q4; //accepting state
+        }
     }
-        }
+    
            
 
 
